@@ -14,10 +14,19 @@ namespace Xabe.OpenSubtitlesApi.Controllers
 {
     public class OpenSubtitlesController: ApiController
     {
+        [HttpGet]
+        // http://localhost:50283/api/OpenSubtitles/GetByHash?hash=5
         public async Task<IHttpActionResult> GetByHash(string hash)
         {
-            var client = Osdb.Login("OSTestUserAgentTemp");
+            string subtitles = DownloadSubtitlesFromOpenSubtitles(hash);
+            string srt = ConvertToSrt(subtitles);
 
+            return Ok(Encoding.UTF8.GetBytes(srt));
+        }
+
+        private string DownloadSubtitlesFromOpenSubtitles(string hash)
+        {
+            IAnonymousClient client = Osdb.Login("OSTestUserAgentTemp");
             var request = new SearchSubtitlesRequest
             {
                 imdbid = string.Empty,
@@ -26,18 +35,13 @@ namespace Xabe.OpenSubtitlesApi.Controllers
                 sublanguageid = "pol"
             };
 
-            MethodInfo dynMethod = client.GetType()
-                                         .GetMethod("SearchSubtitlesInternal",
-                                             BindingFlags.NonPublic | BindingFlags.Instance);
-            var subtitlesList = (List<Subtitle>) dynMethod.Invoke(client, new object[] {request});
-            var subtitles = subtitlesList.OrderByDescending(x => x.Rating)
-                                         .FirstOrDefault();
-            var subtitlesPath = client.DownloadSubtitleToPath(Path.GetTempPath(), subtitles);
-
-
-            string srt = ConvertToSrt(subtitlesPath);
-
-            return Ok(Encoding.UTF8.GetBytes(srt));
+            MethodInfo searchSubtitlesInternal = client.GetType()
+                                                       .GetMethod("SearchSubtitlesInternal",
+                                                           BindingFlags.NonPublic | BindingFlags.Instance);
+            var subtitlesList = (List<Subtitle>) searchSubtitlesInternal.Invoke(client, new object[] {request});
+            Subtitle subtitles = subtitlesList.OrderByDescending(x => x.Rating)
+                                              .FirstOrDefault();
+            return client.DownloadSubtitleToPath(Path.GetTempPath(), subtitles);
         }
 
         private string ConvertToSrt(string path)
