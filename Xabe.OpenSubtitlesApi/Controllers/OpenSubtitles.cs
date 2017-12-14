@@ -26,7 +26,7 @@ namespace Xabe.OpenSubtitlesApi.Controllers
 
         private string DownloadSubtitlesFromOpenSubtitles(string hash)
         {
-            IAnonymousClient client = Osdb.Login("OSTestUserAgentTemp");
+            IAnonymousClient client = Osdb.Login("TemporaryUserAgent");
             var request = new SearchSubtitlesRequest
             {
                 imdbid = string.Empty,

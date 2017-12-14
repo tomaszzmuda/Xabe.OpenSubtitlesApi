@@ -7,3 +7,12 @@
 /packages
 /Xabe.OpenSubtitlesApi/obj
 /Xabe.OpenSubtitlesApi/Properties/PublishProfiles
+/ConsoleApp1/obj
+/ConsoleApp1/bin/Debug/netcoreapp2.0
+/ConsoleApp2/bin/Debug
+/ConsoleApp2/obj/Debug
+/Xabe.OpenSubtitlesApi.Tests/obj/Debug
+/Xabe.OpenSubtitlesApi.Tests/bin/Debug
+/Xabe.OpenSubtitlesApi.Tests
+/ConsoleApp2
+/ConsoleApp1
